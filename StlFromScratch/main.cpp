@@ -1,39 +1,23 @@
-#include "vector.h"
+#include <string>
+#include "wvector.h"
+
 template <typename T>
-void PrintVector(const vector<T>& v)
+void PrintVector(const wvector<T>& v)
 {
 	for (size_t i = 0; i < v.Size(); ++i)
 	{
-		std::cout << v.At(i) << " ";
+		std::cout << v[i] << " ";
 	}
 }
 
 
 int main()
 {
+	wvector<std::string> v;
+	v.PushBack("Hello");
+	v.PushBack("World");
 
-	vector<int> vect;
-	vect.PushBack(5);
-	vect.PushBack(8);
-	vect.PushBack(10);
-	vect.PushBack(23);
-	vect.PushBack(23);
-	vect.PushBack(90);
-	vect.PushBack(44);
-	vect.PushBack(11);
-	vect.PushBack(0);
-	vect.PushBack(4);
-	vect.PushBack(-3);
-
-	PrintVector(vect);
-
-	vect.PopBack();
-	vect.PopBack();
-	vect.PopBack();
-
-	std::cout << std::endl;
-
-	PrintVector(vect);
-
+	PrintVector(v);
+	
 	return 0;
 }
