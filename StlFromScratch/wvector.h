@@ -9,21 +9,63 @@ class wvector
 	size_t m_size = 0;
 	size_t m_capacity = 0;
 
-	void Allocate(const size_t new_capacity)
+	
+public:
+
+	inline wvector() 
+	{ 
+		Resize(3);
+	}
+
+
+	inline wvector(size_t size)
 	{
-		
+		Resize(m_capacity + m_size / 2);
+	}
+
+
+	inline wvector(const wvector& wv)
+	{
+		m_size = wv.Size();
+		m_data = new T[m_size];
+
+		for (size_t i = 0; i < m_size; ++i)
+		{
+			m_data[i] = wv[i];
+		}
+
+		m_capacity = wv.MaxSize();
+	}
+
+
+	inline wvector(wvector&& wv)
+	{
+		//TODO
+	}
+
+	inline ~wvector() { Clear(); }
+
+
+	void Clear(void)
+	{
+		for (size_t i = 0; i < m_size; ++i)
+		{
+			m_data[i].~T();
+		}
+
+		m_size = 0;
+	}
+
+
+	void Resize(const size_t new_capacity)
+	{
+
 		if (m_size > new_capacity)
 		{
 			m_size = new_capacity;
 		}
 
 		T* new_data = new T[new_capacity];
-
-		if (!new_data)
-		{
-			std::cout << "[ERROR]Cannot allocate memory for vector\n";
-			return;
-		}
 
 		for (size_t i = 0; i < m_size; ++i)
 		{
@@ -37,22 +79,10 @@ class wvector
 	}
 
 
-public:
-
-	inline wvector(const size_t size = 0) 
-	{ 
-		Allocate(3);
-	}
-
-
-	inline ~wvector() { Clear(); }
-
-
-	void Clear(void)
+	inline const size_t MaxSize() const
 	{
-		//TODO
+		return m_capacity;
 	}
-
 
 	const T& operator[](const size_t index) const
 	{
@@ -72,12 +102,11 @@ public:
 	}
 
 
-
 	inline void PushBack(const T& e)
 	{
 		if (m_size >= m_capacity)
 		{
-			Allocate(m_capacity + m_size / 2);
+			Resize(m_capacity + m_size / 2);
 		}
 
 		m_data[m_size] = e;

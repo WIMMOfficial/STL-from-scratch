@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 #include "wvector.h"
 
 template <typename T>
@@ -13,11 +14,5 @@ void PrintVector(const wvector<T>& v)
 
 int main()
 {
-	wvector<std::string> v;
-	v.PushBack("Hello");
-	v.PushBack("World");
-
-	PrintVector(v);
-	
 	return 0;
 }
