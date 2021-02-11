@@ -1,6 +1,9 @@
+#include <array>
 #include <string>
-#include <vector>
+#include <iostream>
+#include "warray.h"
 #include "wvector.h"
+
 
 template <typename T>
 void PrintVector(const wvector<T>& v)
@@ -14,36 +17,30 @@ void PrintVector(const wvector<T>& v)
 }
 
 
+template <typename T, size_t N>
+void PrintArr(const warray<T, N>& wa)
+{
+	for (size_t i = 0; i < wa.Size(); ++i)
+	{
+		std::cout << wa[i] << " ";
+	}
+
+	std::cout << std::endl;
+}
+
+
+template<typename T, size_t N>
+void PrintArray(const std::array<T, N> arr)
+{
+	for (size_t i = 0; i < arr.size(); ++i)
+	{
+		std::cout << arr[i] << " ";
+	}
+	std::cout << std::endl;
+}
+
+
 int main()
 {
-	
-	wvector<int> wv1;
-	wv1.PushBack(102);
-	wv1.PushBack(88);
-	wv1.PushBack(34);
-	wv1.PushBack(23);
-	wv1.PushBack(11);
-
-	/*
-	wvector<int> wv2;
-	wv2.PushBack(192);
-	wv2.PushBack(88);
-	wv2.PushBack(8);
-	wv2.PushBack(77);
-	wv2.PushBack(111);
-	wv2.PushBack(7);
-	wv2.PushBack(60);
-	*/
-
-	//wv1.Swap(wv2);
-
-	wvector<int> wv2(wv1);
-
-	PrintVector(wv2);
-	//PrintVector(wv2);
-	
-
-	
-
 	return 0;
 }
