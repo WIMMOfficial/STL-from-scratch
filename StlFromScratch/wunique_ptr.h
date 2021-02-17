@@ -11,13 +11,16 @@ public:
 	explicit wunique_ptr(T* e);
 	~wunique_ptr();
 	wunique_ptr<T>& operator=(T&& el);
-	wunique_ptr<T>& operator=(std::nullptr_t);
+	wunique_ptr<T>& operator=(std::nullptr_t p);
 	T* Get() const;
 	explicit operator bool() const;
 	T& operator*() const;
 	T* operator->() const;
-	T& operator[](size_t i) const;
-	
+	//T* Release();
+	void Reset(T* p);
+
+	wunique_ptr& operator=(const wunique_ptr&) = delete;
+	wunique_ptr operator=(const wunique_ptr&) = delete;
 
 };
 
@@ -50,9 +53,9 @@ inline wunique_ptr<T>& wunique_ptr<T>::operator=(T&& el)
 }
 
 template<class T>
-inline wunique_ptr<T>& wunique_ptr<T>::operator=(std::nullptr_t)
+inline wunique_ptr<T>& wunique_ptr<T>::operator=(std::nullptr_t p)
 {
-	m_data = nullptr;
+	m_data = p;
 }
 
 
@@ -86,11 +89,20 @@ inline T* wunique_ptr<T>::operator->() const
 	return m_data;
 }
 
-
-template <class T>
-inline T& wunique_ptr<T>::operator[](size_t i) const
+/*
+template<class T>
+inline T* wunique_ptr<T>::Release()
 {
-	return *(m_data + i);
+	T* retValue = m_data;
+	m_data = nullptr;
+	return retValue;
 }
+*/
 
+template<class T>
+inline void wunique_ptr<T>::Reset(T* p)
+{
+	delete m_data;
+	m_data = p;
+}
 
