@@ -4,70 +4,80 @@ template <class T>
 
 class wvector
 {
-	T* m_data = nullptr;
-	size_t m_size = 0;
-	size_t m_capacity = 0;
+	T* m_data;
+	size_t m_size;
+	size_t m_capacity;
 
 	
 public:
 
+	
 	wvector();
 	wvector(size_t size);
 	wvector(const wvector& wv);
 	wvector(wvector&& wv) noexcept;
 	~wvector();
-	void Clear(void);
-	T* Begin(void) const;
-//	T& operator=(const wvector& wv) noexcept;
-//  T& operator=(wvector&& wv);
-	void Swap(wvector& wv);
+
+	void PushBack(const T& e);
+	void PushBack(T&& e);
+	void PopBack();
+	void Clear();
+
+	const T* Data() const;
+	T* Data();
+	T& operator[](const size_t index);
+	wvector<T>& operator=(const wvector<T>& wv);
+	wvector<T>& operator=(wvector<T>&& wv) noexcept;
+	const T& operator[](const size_t index) const;
+	T& Back() const;
+
+	void Swap(wvector& wv) noexcept;
 	void Resize(size_t new_capacity);
 	size_t MaxSize() const;
-	const T& operator[](const size_t index) const;
-	T& operator[](const size_t index);
-	size_t Size(void) const;
-	void PushBack(const T& e);
-	T& Back(void) const;
-	void PopBack(void);
+	size_t Size() const;
+
 };
 
 
 template<typename T>
-inline wvector<T>::wvector()
+wvector<T>::wvector()
 {
 	Resize(3);
 }
 
 
 template<typename T>
-inline wvector<T>::wvector(size_t size)
+wvector<T>::wvector(size_t size)
 {
-	Resize(m_capacity + m_size / 2);
+	Resize(m_capacity + size/ 2);
 }
 
 
 template<typename T>
-inline wvector<T>::wvector(const wvector& wv)
+wvector<T>::wvector(const wvector& wv) 
+		: m_data		(new T[m_size])
+		, m_size		(wv.Size())
+		, m_capacity	(wv.MaxSize())
+		 
 {
-	m_size = wv.Size();
-	m_capacity = wv.MaxSize();
-
-	m_data = new T[m_size];
-
-	std::copy(wv.Begin(), wv.Begin() + wv.Size(), m_data);
+	std::copy(wv.Data(), wv.Data() + wv.Size(), m_data);
 }
 
 
 template<typename T>
-inline wvector<T>::wvector(wvector&& wv) noexcept
+wvector<T>::wvector(wvector&& wv) noexcept
+		: m_data		(nullptr)
+		, m_capacity	(0)
+		, m_size		(0)
 {
-	//TODO
+
+	wv.swap(*this);
 }
 
 
 
 template<typename T>
-inline wvector<T>::~wvector()
+ wvector<T>::~wvector()
 {
 	Clear();
 	delete[] m_data;
@@ -75,7 +85,7 @@ inline wvector<T>::~wvector()
 
 
 template<typename T>
-inline void wvector<T>::Clear(void)
+ void wvector<T>::Clear()
 {
 	for (size_t i = 0; i < m_size; ++i)
 	{
@@ -87,33 +97,46 @@ inline void wvector<T>::Clear(void)
 
 
 template<typename T>
-inline T* wvector<T>::Begin(void) const
+ const T* wvector<T>::Data() const
 {
 	return m_data;
 }
 
-/*
-template<typename T>
-inline T& wvector<T>::operator=(const wvector& wv)
-{
-	//TODO
-}
-*/
 
-/*
+ template<typename T>
+ T* wvector<T>::Data()
+ {
+	 return m_data;
+ }
+
+ 
 template<typename T>
-inline T& wvector<T>::operator=(wvector&& wv) noexcept
+wvector<T>& wvector<T>::operator=(const wvector& wv)
 {
-	//TODO
+	wvector tmp(wv);
+	tmp.Swap(*this);
+	return *this;
 }
-*/
 
 
+
 template<typename T>
-inline void wvector<T>::Swap(wvector& wv)
+ wvector<T>& wvector<T>::operator=(wvector<T>&& wv) noexcept
 {
-	//TODO
+	wv.Swap(*this);
+	return *this;
+ }
+
+ 
+template<typename T>
+ void wvector<T>::Swap(wvector& wv) noexcept
+{
+	 using std::swap;
+	 swap(m_capacity, wv.m_capacity);
+	 swap(m_size, wv.m_size);
+	 swap(m_data, wv.m_data);
 }
+
 
 
 template<typename T>
@@ -126,13 +149,16 @@ void wvector<T>::Resize(size_t new_capacity)
 	}
 
 	T* new_data = new T[new_capacity];
-
-	for (size_t i = 0; i < m_size; ++i)
+	if (m_data != nullptr)
 	{
-		new_data[i] = m_data[i];
+		for (size_t i = 0; i < m_size; ++i)
+		{
+			new_data[i] = m_data[i];
+		}
+
+		delete[] m_data;
 	}
 
-	delete[] m_data;
 	m_data = new_data;
 	m_capacity = new_capacity;
 
@@ -140,35 +166,35 @@ void wvector<T>::Resize(size_t new_capacity)
 
 
 template<typename T>
-inline size_t wvector<T>::MaxSize() const
+ size_t wvector<T>::MaxSize() const
 {
 	return m_capacity;
 }
 
 
 template<typename T>
-inline const T& wvector<T>::operator[](const size_t index) const
+ const T& wvector<T>::operator[](const size_t index) const
 {
 	return m_data[index];
 }
 
 
 template<typename T>
-inline T& wvector<T>::operator[](const size_t index)
+ T& wvector<T>::operator[](const size_t index)
 {
 	return m_data[index];
 }
 
 
 template<typename T>
-inline size_t wvector<T>::Size(void) const
+ size_t wvector<T>::Size() const
 {
 	return m_size;
 }
 
 
 template<typename T>
-inline void wvector<T>::PushBack(const T& e)
+ void wvector<T>::PushBack(const T& e)
 {
 	if (m_size >= m_capacity)
 	{
@@ -181,14 +207,27 @@ inline void wvector<T>::PushBack(const T& e)
 
 
 template<typename T>
-inline T& wvector<T>::Back(void) const
+ T& wvector<T>::Back() const
 {
 	return m_data[m_size - 1];
 }
 
 
+ template<typename T>
+ void wvector<T>::PushBack(T&& e)
+ {
+	 if (m_size >= m_capacity)
+	 {
+		 Resize(m_capacity + m_size / 2);
+	 }
+
+	 m_data[m_size] = std::move(e);
+	 ++m_size;
+ }
+
+
 template<typename T>
-inline void wvector<T>::PopBack(void)
+ void wvector<T>::PopBack()
 {
 	if (m_size > 0)
 	{
