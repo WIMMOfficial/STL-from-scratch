@@ -14,8 +14,8 @@ public:
 	
 	wvector();
 	wvector(size_t size);
-	wvector(const wvector& wv);
-	wvector(wvector&& wv) noexcept;
+	wvector(const wvector<T>& wv);
+	wvector(wvector<T>&& wv) noexcept;
 	~wvector();
 
 	void PushBack(const T& e);
@@ -54,7 +54,7 @@ wvector<T>::wvector(size_t size)
 
 
 template<typename T>
-wvector<T>::wvector(const wvector& wv) 
+wvector<T>::wvector(const wvector<T>& wv) 
 		: m_data		(new T[m_size])
 		, m_size		(wv.Size())
 		, m_capacity	(wv.MaxSize())
@@ -65,13 +65,13 @@ wvector<T>::wvector(const wvector& wv)
 
 
 template<typename T>
-wvector<T>::wvector(wvector&& wv) noexcept
+wvector<T>::wvector(wvector<T>&& wv) noexcept
 		: m_data		(nullptr)
 		, m_capacity	(0)
 		, m_size		(0)
 {
 
-	wv.swap(*this);
+	wv.Swap(*this);
 }
 
 
@@ -111,7 +111,7 @@ template<typename T>
 
  
 template<typename T>
-wvector<T>& wvector<T>::operator=(const wvector& wv)
+wvector<T>& wvector<T>::operator=(const wvector<T>& wv)
 {
 	wvector tmp(wv);
 	tmp.Swap(*this);
@@ -129,7 +129,7 @@ template<typename T>
 
  
 template<typename T>
- void wvector<T>::Swap(wvector& wv) noexcept
+ void wvector<T>::Swap(wvector<T>& wv) noexcept
 {
 	 using std::swap;
 	 swap(m_capacity, wv.m_capacity);
