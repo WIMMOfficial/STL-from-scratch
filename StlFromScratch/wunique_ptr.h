@@ -9,65 +9,83 @@ class wunique_ptr
 public:
 	wunique_ptr();
 	explicit wunique_ptr(T* e);
+	wunique_ptr(wunique_ptr<T>&& e) noexcept;
 	~wunique_ptr();
-	wunique_ptr<T>& operator=(T&& el);
+
+
+	wunique_ptr<T>& operator=(wunique_ptr<T>&& e) noexcept;
 	wunique_ptr<T>& operator=(std::nullptr_t p);
-	T* Get() const;
+
+
 	explicit operator bool() const;
 	T& operator*() const;
 	T* operator->() const;
-	//T* Release();
+
+	T* Get() const;
+	T* Release();
 	void Reset(T* p);
 
-	wunique_ptr& operator=(const wunique_ptr&) = delete;
-	wunique_ptr operator=(const wunique_ptr&) = delete;
+
+	wunique_ptr(const wunique_ptr<T>& e) = delete;
+	wunique_ptr<T>& operator=(const wunique_ptr<T>& e) = delete;
 
 };
 
 
 template<class T>
-inline wunique_ptr<T>::wunique_ptr()
+ wunique_ptr<T>::wunique_ptr()
 {
 	m_data = nullptr;
 }
 
 
 template<class T>
-inline wunique_ptr<T>::wunique_ptr(T* e)
+ wunique_ptr<T>::wunique_ptr(T* e)
 {
 	m_data = e;
 }
 
 
+ template <class T>
+ wunique_ptr<T>::wunique_ptr(wunique_ptr<T>&& e) noexcept
+				:m_data(e.m_data)
+ {
+	 e.m_data = nullptr;
+ }
+
+
 template<class T>
-inline  wunique_ptr<T>::~wunique_ptr()
+  wunique_ptr<T>::~wunique_ptr()
 {
 	delete m_data;
 }
 
 
 template<class T>
-inline wunique_ptr<T>& wunique_ptr<T>::operator=(T&& el)
+ wunique_ptr<T>& wunique_ptr<T>::operator=(wunique_ptr<T>&& e) noexcept
 {
-	//TODO
+	 m_data = e.m_data;
+	 e.m_data = nullptr;
+	 return *this;
 }
 
+
 template<class T>
-inline wunique_ptr<T>& wunique_ptr<T>::operator=(std::nullptr_t p)
+ wunique_ptr<T>& wunique_ptr<T>::operator=(std::nullptr_t p)
 {
 	m_data = p;
 }
 
 
 template<class T>
-inline T* wunique_ptr<T>::Get() const
+ T* wunique_ptr<T>::Get() const
 {
 	return m_data;
 }
 
 
 template <class T>
-inline  wunique_ptr<T>::operator bool() const
+  wunique_ptr<T>::operator bool() const
 {
 	if (Get() != nullptr)
 		return true;
@@ -77,30 +95,30 @@ inline  wunique_ptr<T>::operator bool() const
 
 
 template <class T>
-inline T& wunique_ptr<T>::operator*() const
+ T& wunique_ptr<T>::operator*() const
 {
 	return *m_data;
 }
 
 
 template <class T>
-inline T* wunique_ptr<T>::operator->() const
+ T* wunique_ptr<T>::operator->() const
 {
 	return m_data;
 }
 
-/*
+
 template<class T>
-inline T* wunique_ptr<T>::Release()
+ T* wunique_ptr<T>::Release()
 {
 	T* retValue = m_data;
 	m_data = nullptr;
 	return retValue;
 }
-*/
+
 
 template<class T>
-inline void wunique_ptr<T>::Reset(T* p)
+ void wunique_ptr<T>::Reset(T* p)
 {
 	delete m_data;
 	m_data = p;
