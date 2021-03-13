@@ -10,7 +10,7 @@ class wlist
 
 		Node*	m_next;
 		Node*	m_prev;
-		T1			m_data;
+		T1		m_data;
 
 		Node(T1 data = T1(), Node* next = nullptr, Node* prev = nullptr)
 			: m_next (next)
@@ -37,6 +37,7 @@ public:
 	void PopBack();
 	void PopFront();
 	void Clean();
+	void Show();  //for debugging purposes
 	const T& Back() const;
 	T& Back();
 
@@ -73,7 +74,7 @@ wlist<T>::wlist(wlist<T>&& e)
 template <typename T>
 wlist<T>::~wlist()
 {
-	//TODO
+	Clean();
 }
 
 
@@ -81,16 +82,21 @@ template <typename T>
 void wlist<T>::PushBack(const T& e)
 {
 	
+	Node<T>* newNode = new Node<T>(e, nullptr, m_tail);
+
 	if (!m_head)
 	{
-		m_head = new Node<T>(e);
+		m_head = newNode;
 		m_tail = m_head;
-		++m_size;
-		return;
+		
 	}
 
-	Node<T>* newNode = new Node<T>(e, nullptr, m_tail);
-	m_tail = newNode;
+	else
+	{
+		m_tail->m_next = newNode;
+		m_tail = newNode;
+	}
+
 	++m_size;
 }
 
@@ -110,13 +116,28 @@ T& wlist<T>::Back()
 template <typename T>
 void wlist<T>::Clean()
 {
-	Node<T> n = m_head;
+	Node<T>* n = m_head;
 	while (n != m_tail)
 	{
 		n->m_data.~T();
-		n->m_prev = nullptr;
+		//n->m_prev = nullptr;
 		n = n->m_next;
-		n->m_next = nullptr;
+		//n->m_next = nullptr;
+		delete n->m_prev;
+	}
+
+	delete n;
+}
+
+template<typename T>
+void wlist<T>::Show()
+{
+	Node<T>* n = m_head;
+
+	while (n != nullptr)
+	{
+		std::cout << n->m_data << " ";
+		n = n->m_next;
 	}
 }
 
