@@ -38,8 +38,11 @@ public:
 	void PopFront();
 	void Clean();
 	void Show();  //for debugging purposes
+	void Swap(wlist<T>& l);
 	const T& Back() const;
 	T& Back();
+	wlist<T>& operator=(const wlist<T>& e);
+	wlist<T>& operator=(wlist<T>&& e);
 
 	const size_t Size() const;
 
@@ -60,14 +63,34 @@ wlist<T>::wlist()
 template <typename T>
 wlist<T>::wlist(const wlist<T>& e)
 {
-	//TODO
+	if (e.m_head == nullptr)
+	{
+		m_head = m_tail = nullptr;
+	}
+
+	else
+	{
+		m_head = new Node<T>(e.m_head->m_data, e.m_head->m_next, e.m_head->m_prev);
+		Node<T>* tmp = e.m_head->m_next;
+		Node<T>* tmpCurrent = m_head;
+
+		while (tmp != nullptr)
+		{
+			tmpCurrent->m_next = new Node<T>(tmp->m_data, nullptr, tmpCurrent);
+			tmp = tmp->m_next;
+			tmpCurrent = tmpCurrent->m_next;
+		}
+
+		m_tail = tmpCurrent;
+	}
+
 }
 
 
 template <typename T>
 wlist<T>::wlist(wlist<T>&& e)
 {
-	//TODO
+	e.Swap(*this);
 }
 
 
@@ -107,11 +130,13 @@ const T& wlist<T>::Back() const
 	return m_tail->m_data;
 }
 
+
 template <typename T>
 T& wlist<T>::Back()
 {
 	return m_tail->m_data;
 }
+
 
 template <typename T>
 void wlist<T>::Clean()
@@ -120,14 +145,14 @@ void wlist<T>::Clean()
 	while (n != m_tail)
 	{
 		n->m_data.~T();
-		//n->m_prev = nullptr;
 		n = n->m_next;
-		//n->m_next = nullptr;
 		delete n->m_prev;
 	}
 
 	delete n;
+	m_size = 0;
 }
+
 
 template<typename T>
 void wlist<T>::Show()
@@ -163,9 +188,33 @@ void wlist<T>::PopFront()
 }
 
 
+template <typename T>
+void wlist<T>::Swap(wlist<T>& l)
+{
+	using std::swap;
+
+	swap(m_head, l.m_head);
+	swap(m_tail, l.m_tail);
+	swap(m_size, l._size);
+}
+
 
 template <typename T>
 const size_t wlist<T>::Size() const
 {
 	return m_size;
+}
+
+
+template <typename T>
+wlist<T>& wlist<T>::operator=(const wlist<T>& e)
+{
+	//TODO
+}
+
+
+template <typename T>
+wlist<T>& wlist<T>::operator=(wlist<T>&& e)
+{
+	//TODO
 }
