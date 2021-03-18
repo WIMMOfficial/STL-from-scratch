@@ -29,7 +29,7 @@ class wlist
 public:
 	wlist();
 	wlist(const wlist<T>& e);
-	wlist(wlist<T>&& e);
+	wlist(wlist<T>&& e) noexcept;
 	~wlist();
 
 	void PushBack(const T& e);
@@ -38,11 +38,11 @@ public:
 	void PopFront();
 	void Clean();
 	void Show();  //for debugging purposes
-	void Swap(wlist<T>& l);
+	void Swap(wlist<T>& l) noexcept;
 	const T& Back() const;
 	T& Back();
 	wlist<T>& operator=(const wlist<T>& e);
-	wlist<T>& operator=(wlist<T>&& e);
+	wlist<T>& operator=(wlist<T>&& e) noexcept;
 
 	const size_t Size() const;
 
@@ -89,7 +89,7 @@ wlist<T>::wlist(const wlist<T>& e)
 
 
 template <typename T>
-wlist<T>::wlist(wlist<T>&& e)
+wlist<T>::wlist(wlist<T>&& e) noexcept
 {
 	e.Swap(*this);
 }
@@ -225,13 +225,13 @@ void wlist<T>::PopFront()
 
 
 template <typename T>
-void wlist<T>::Swap(wlist<T>& l)
+void wlist<T>::Swap(wlist<T>& l) noexcept
 {
 	using std::swap;
 
 	swap(m_head, l.m_head);
 	swap(m_tail, l.m_tail);
-	swap(m_size, l._size);
+	swap(m_size, l.m_size);
 }
 
 
@@ -245,12 +245,15 @@ const size_t wlist<T>::Size() const
 template <typename T>
 wlist<T>& wlist<T>::operator=(const wlist<T>& e)
 {
-	//TODO
+	wlist<T> tmp(e);
+	tmp.Swap(*this);
+	return *this;
 }
 
 
 template <typename T>
-wlist<T>& wlist<T>::operator=(wlist<T>&& e)
+wlist<T>& wlist<T>::operator=(wlist<T>&& e) noexcept
 {
-	//TODO
+	e.Swap(*this);
+	return *this;
 }
