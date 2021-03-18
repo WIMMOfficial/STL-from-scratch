@@ -62,6 +62,7 @@ wlist<T>::wlist()
 
 template <typename T>
 wlist<T>::wlist(const wlist<T>& e)
+	:m_size(e.m_size)
 {
 	if (e.m_head == nullptr)
 	{
@@ -164,27 +165,62 @@ void wlist<T>::Show()
 		std::cout << n->m_data << " ";
 		n = n->m_next;
 	}
+
+	std::cout << std::endl;
 }
 
 
 template <typename T>
 void wlist<T>::PopBack()
 {
-	//TODO
+	if (m_size > 0 && m_tail != nullptr)
+	{
+		Node<T>* tmp = m_tail;
+		m_tail = m_tail->m_prev;
+		m_tail->m_next = nullptr;
+
+		tmp->m_data.~T();
+		delete tmp;
+		--m_size;
+	}
 }
 
 
 template <typename T>
 void wlist<T>::PushFront(const T& e)
 {
-	//TODO
+	Node<T>* newNode = new Node<T>(e, m_head, nullptr);
+
+	if (!m_head)
+	{
+		m_head = newNode;
+		m_tail = m_head;
+
+	}
+
+	else
+	{
+		m_head->m_prev = newNode;
+		m_head = newNode;
+	}
+
+	++m_size;
 }
 
 
 template <typename T>
 void wlist<T>::PopFront()
 {
-	//TODO
+	if (m_size > 0 && m_head != nullptr)
+	{
+		Node<T>* tmp = m_head;
+		m_head = m_head->m_next;
+		m_head->m_prev = nullptr;
+
+		tmp->m_data.~T();
+		delete tmp;
+		--m_size;
+	}
 }
 
 
